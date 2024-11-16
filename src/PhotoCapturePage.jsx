@@ -1,14 +1,22 @@
 import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Webcam from "react-webcam";
+import flash from "./assets/flash.png"
+import camerafb from "./assets/camerafb.png"
+import capture from "./assets/capture.png"
+import back from "./assets/back.png"
+import retake from "./assets/retake.png"
+import upload from "./assets/Frame185.png"
 
 const PhotoCapturePage = () => {
   const webcamRef = useRef(null);
+  const navigate = useNavigate();
   const [capturedPhoto, setCapturedPhoto] = useState(null);
   const [flashEnabled, setFlashEnabled] = useState(false);
   const [uploadStatus, setUploadStatus] = useState("");
   const [uploadedPhoto, setUploadedPhoto] = useState(null); // 업로드된 이미지 상태
 
-  const capturePhoto = () => { 
+  const capturePhoto = () => {
     if (flashEnabled) {
       document.body.style.backgroundColor = "white";
       setTimeout(() => {
@@ -21,6 +29,9 @@ const PhotoCapturePage = () => {
       setCapturedPhoto(imageSrc);
     }
   };
+  const gotoHome = () => {
+    navigate("/home");
+  }
 
   const retakePhoto = () => {
     setCapturedPhoto(null);
@@ -32,42 +43,24 @@ const PhotoCapturePage = () => {
     setFlashEnabled((prev) => !prev);
   };
 
-  const uploadPhoto = async () => {
-    if (!capturedPhoto) return;
-
-    const blob = await fetch(capturedPhoto).then((res) => res.blob());
-    const file = new File([blob], "captured_photo.jpg", { type: "image/jpeg" });
-
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      const response = await fetch("/api/v1/picture", {
-        method: "POST",
-        headers: {},
-        body: formData,
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        setUploadStatus("File successfully uploaded!");
-        setUploadedPhoto(capturedPhoto); // 업로드 성공 시 촬영 이미지를 업로드 이미지로 설정
-      } else {
-        const errorMessage = await response.text();
-        setUploadStatus(`Failed to upload file: ${errorMessage}`);
-      }
-    } catch (error) {
-      setUploadStatus(`Failed to upload file: ${error.message}`);
+  // 서버와 통신 없이 촬영 이미지를 `uploadedPhoto` 상태로 저장
+  const uploadPhoto = () => {
+    if (!capturedPhoto) {
+      setUploadStatus("No photo to upload.");
+      return;
     }
+
+    setUploadedPhoto(capturedPhoto); // 촬영 이미지를 업로드된 이미지로 설정
+    console.log(capturedPhoto);
+    console.log("Photo successfully uploaded locally!");
+    setUploadStatus("Photo successfully uploaded locally!");
   };
-  //  <img src={flashIcon} alt="flash" style={styles.icon} />
-  // <img src={captureIcon} alt="capture" style={styles.bigIcon} />
-  //<img src={transitionIcon} alt="transition" style={styles.icon} />
 
   return (
     <div style={styles.photoCapturePage}>
       {!capturedPhoto ? (
         <>
+          <img src={back} onClick={gotoHome} style={{ width: '50px', height: '50px', marginleft: 0 }}  ></img>
           <div style={styles.webcamContainer}>
             <Webcam
               audio={false}
@@ -78,13 +71,13 @@ const PhotoCapturePage = () => {
           </div>
           <div style={styles.controls}>
             <button onClick={toggleFlash} style={styles.flashButton}>
-            
+              <img src={flash}></img>
             </button>
             <button onClick={capturePhoto} style={styles.captureButton}>
-              
+              <img src={capture}></img>
             </button>
             <button onClick={capturePhoto} style={styles.transitionButton}>
-              
+              <img src={camerafb}></img>
             </button>
           </div>
         </>
@@ -92,17 +85,17 @@ const PhotoCapturePage = () => {
         <div style={styles.photoPreviewPage}>
           <div style={styles.photoPreview}>
             <img
-              src={uploadedPhoto || capturedPhoto} // 업로드된 사진이 있으면 업로드 사진을 표시
+              src={uploadedPhoto || capturedPhoto} // 업로드된 사진이 있으면 업로드된 사진을 표시
               alt="Captured"
               style={styles.capturedPhoto}
             />
           </div>
           <div style={styles.photoPreviewControls}>
             <button onClick={retakePhoto} style={styles.retakeButton}>
-              다시 찍기
+              <img src={retake}></img> 
             </button>
             <button onClick={uploadPhoto} style={styles.uploadButton}>
-              올리기
+              <img src={upload}></img>
             </button>
           </div>
           {uploadStatus && <p>{uploadStatus}</p>}
@@ -118,7 +111,7 @@ const styles = {
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#ffcccc",
+    backgroundColor: "#white",
     position: "relative",
   },
   webcamContainer: {
@@ -142,7 +135,7 @@ const styles = {
     display: "flex",
     justifyContent: "space-around",
     alignItems: "center",
-    backgroundColor: "#ffcccc",
+    backgroundColor: "#white",
   },
   flashButton: {
     backgroundColor: "transparent",
@@ -173,7 +166,7 @@ const styles = {
     alignItems: "center",
     justifyContent: "space-between",
     height: "100vh",
-    backgroundColor: "black",
+    backgroundColor: "white",
     position: "relative",
   },
   photoPreview: {
@@ -196,10 +189,10 @@ const styles = {
     justifyContent: "space-between",
     alignItems: "center",
     padding: "10px 0",
-    backgroundColor: "#ffcccc",
+    backgroundColor: "#white",
   },
   retakeButton: {
-    backgroundColor: "#ffcccc",
+    backgroundColor: "#white",
     border: "none",
     borderRadius: "10px",
     padding: "10px 20px",
@@ -207,7 +200,7 @@ const styles = {
     cursor: "pointer",
   },
   uploadButton: {
-    backgroundColor: "#ffcccc",
+    backgroundColor: "#white",
     border: "none",
     borderRadius: "10px",
     padding: "10px 20px",

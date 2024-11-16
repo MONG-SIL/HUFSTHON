@@ -9,6 +9,10 @@ import styled from "styled-components";
 import './App.css'
 import Home from "./home";
 import PhotoCapturePage from "./PhotoCapturePage";
+import SignUp from "./signUp";
+import FirstPage from "./firstPage";
+import Jinfo from "./Jinfo";
+import Kakaomap from "./kakaomap"
 
 const Main = styled.main`
   flex: 1;
@@ -24,23 +28,19 @@ const AppContainer = styled.div`
 `;
 
 
-<<<<<<< HEAD
 function AppContent() { 
-=======
-function AppContent() {
->>>>>>> 483cedf6e224e4e5b9a2dccddeb6ae88241729a9
   
   return (
     <>
       <Main>
         <Routes>
-<<<<<<< HEAD
         <Route path="/home" element={<Home />} />
-=======
-        <Route path="/" element={<Home />} />
->>>>>>> 483cedf6e224e4e5b9a2dccddeb6ae88241729a9
-        <Route path="photo-capture" element={<PhotoCapturePage />} />
-        </Routes>
+        <Route path="/photo-capture" element={<PhotoCapturePage />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/firstpage" element={<FirstPage />} />
+        <Route path="/jinfo" element={<Jinfo />} />
+        <Route path="/kakaomap" element={<Kakaomap />} />
+        </Routes>  
       </Main>
     </>
   )
